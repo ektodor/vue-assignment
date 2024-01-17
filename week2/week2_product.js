@@ -23,13 +23,11 @@ createApp({
     axios
       .post(`${url}/api/user/check`, {})
       .then((res) => {
-        // console.log(res);
         this.loginStatus = true;
         return axios.get(`${url}/api/${path}/admin/products`);
       })
       .then((res) => {
         this.products = res.data.products;
-        // console.log(res.data.products);
       })
       .catch((err) => {
         console.error(err.message);

@@ -2,7 +2,7 @@ import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
 const url = "https://ec-course-api.hexschool.io/v2";
 const path = "ektodorwang-api";
 
-createApp({
+const app = {
   data() {
     return {
       account: "",
@@ -19,7 +19,7 @@ createApp({
         .then((res) => {
           const { token, expired } = res.data;
           document.cookie = `token=${token};expired=${new Date(expired)}`;
-          window.location = "week2_product.html";
+          window.location = "week3_crud.html";
         })
         .catch((err) => {
           console.error("Login error");
@@ -27,4 +27,6 @@ createApp({
         });
     },
   },
-}).mount("#app");
+};
+
+createApp(app).mount("#app");
