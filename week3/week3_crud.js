@@ -22,7 +22,8 @@ const app = {
       method === "edit"
         ? (this.isInCreateModal = false)
         : (this.isInCreateModal = true);
-      this.tempProduct = item;
+      // 編輯產品 item 需使用複製再賦予給 tempProduct，否則會有傳參考的問題，在未按確定按鈕前就會改變原始資料
+      this.tempProduct = JSON.parse(JSON.stringify(item));
       // 沒有 imagesUrl 會造成 html 中使用 push 出錯
       if (!this.tempProduct.imagesUrl) {
         this.tempProduct.imagesUrl = [];
@@ -55,22 +56,19 @@ const app = {
         })
         .catch((err) => {
           console.error(err.message);
-          alert("上傳失敗");
+          alert("新增失敗");
         });
     },
     // read
     readItem() {
       axios
-        .post(`${url}/api/user/check`, {})
-        .then((res) => {
-          return axios.get(`${url}/api/${path}/admin/products`);
-        })
+        .get(`${url}/api/${path}/admin/products`)
         .then((res) => {
           this.products = res.data.products;
         })
         .catch((err) => {
           console.error(err.message);
-          window.location = "./week3_login.html";
+          alert("讀取資料失敗");
         });
     },
     // update
@@ -100,6 +98,7 @@ const app = {
         })
         .catch((error) => {
           console.error(error.message);
+          alert("刪除資料失敗");
         });
     },
   },
@@ -113,6 +112,17 @@ const app = {
       "$1"
     );
     axios.defaults.headers.common["Authorization"] = token;
+    // 驗證登入只需在進入頁面時驗證一次就足夠了，不用和 GET 寫在一起
+    axios
+      .post(`${url}/api/user/check`, {})
+      .then((res) => {
+        return;
+      })
+      .catch((err) => {
+        console.error(err.message);
+        alert("請重新登入");
+        window.location = "./week3_login.html";
+      });
     this.readItem();
   },
 };

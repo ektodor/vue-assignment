@@ -24,6 +24,7 @@ const app = {
         .catch((err) => {
           console.error("Login error");
           console.error(err.message);
+          alert("登入失敗");
         });
     },
   },
