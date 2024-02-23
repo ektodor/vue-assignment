@@ -14,7 +14,6 @@ const path = "ektodorwang-api";
 3. 分頁元件化 ✅
 */
 let openModalBtn;
-let openDeleteModalBtn;
 
 const app = createApp({
   data() {
@@ -23,6 +22,8 @@ const app = createApp({
       tempProduct: {},
       isCreateModal: false,
       pagination: {},
+      openEditModal: null,
+      openDeleteModal: null,
     };
   },
   methods: {
@@ -32,7 +33,7 @@ const app = createApp({
       //   console.log(this.tempProduct);
       // 刪除的 modal
       if (mode === "delete") {
-        openDeleteModalBtn.show();
+        this.openDeleteModal();
         return;
       }
       // 編輯和新增的 modal
@@ -44,7 +45,7 @@ const app = createApp({
       if (!this.tempProduct.imagesUrl) {
         this.tempProduct.imagesUrl = [];
       }
-      openModalBtn.show();
+      this.openEditModal();
     },
     //   3. 讀取產品
     readProducts(currentPage) {
@@ -84,92 +85,11 @@ const app = createApp({
   },
 });
 // 分頁
-app.component("pagination", {
-  template: "#pagination",
-  props: ["pagination"],
-  methods: {
-    changePage(page) {
-      this.$emit("change-page", page);
-    },
-  },
-});
+import paginationComponent from "./paginationComponent.js";
+app.component("pagination", paginationComponent);
 // 新增 編輯 頁面
-app.component("productDetail", {
-  template: "#productDetail",
-  props: ["tempProduct", "isCreateModal"],
-  methods: {
-    //   2. 新增產品
-    createPrdouct() {
-      //   console.log("createPrdouct");
-      this.tempProduct.imagesUrl = this.tempProduct.imagesUrl.filter(
-        (data) => data != ""
-      );
-      const { category, num, origin_price, price, title, unit } =
-        this.tempProduct;
-
-      if (!(category || num || origin_price || price || title || unit)) {
-        alert("請勿空白");
-        return;
-      }
-      axios
-        .post(`${url}/api/${path}/admin/product`, {
-          data: this.tempProduct,
-        })
-        .then((res) => {
-          this.$emit("readProducts");
-          // this.readProducts();
-          openModalBtn.hide();
-        })
-        .catch((err) => {
-          console.error(err.message);
-          alert("新增失敗");
-        });
-    },
-    //   4. 更新產品
-    updatePrdouct() {
-      //   console.log("updatePrdouct");
-      axios
-        .put(`${url}/api/${path}/admin/product/${this.tempProduct.id}`, {
-          data: this.tempProduct,
-        })
-        .then((res) => {
-          this.$emit("readProducts");
-          // this.readProducts();
-          openModalBtn.hide();
-        })
-        .catch((err) => {
-          console.error(err.message);
-          alert("更新失敗");
-        });
-    },
-  },
-  mounted() {
-    // modal
-    openModalBtn = new bootstrap.Modal(document.getElementById("productModal"));
-  },
-});
-app.component("deleteProduct", {
-  template: "#deleteProduct",
-  props: ["tempProduct", "readProducts"],
-  methods: {
-    //   5. 刪除產品
-    deletePrdouct() {
-      axios
-        .delete(`${url}/api/${path}/admin/product/${this.tempProduct.id}`)
-        .then((res) => {
-          this.readProducts();
-          openDeleteModalBtn.hide();
-        })
-        .catch((error) => {
-          console.error(error.message);
-          alert("刪除資料失敗");
-        });
-    },
-  },
-  mounted() {
-    openDeleteModalBtn = new bootstrap.Modal(
-      document.getElementById("delProductModal")
-    );
-  },
-});
+import editProductComponent from "./editProductComponent.js";
+app.component("productDetail", editProductComponent);
+import deleteProductComponent from "./deleteProductComponent.js";
+app.component("deleteProduct", deleteProductComponent);
 app.mount("#app");
