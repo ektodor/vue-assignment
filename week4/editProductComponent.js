@@ -108,12 +108,12 @@ export default {
               v-for="(item, index) in tempProduct.imagesUrl"
               :key="item"
             >
-              <!-- 補充圖片網址的 label for 和 input id 在未填入網址之前會無法對應，可改為綁定 補充圖片 - index + 1  之類的名稱 -->
-              <label :for="'補充圖片-'+index + 1" class="form-label mb-2"
+              <!-- 補充圖片網址的 label for 和 input id 在未填入網址之前會無法對應，可改為綁定 補充圖片 - (index + 1)  之類的名稱 -->
+              <label :for="'補充圖片-'+ (index + 1)" class="form-label mb-2"
                 >補充圖片網址</label
               >
               <input
-                :id="'補充圖片-'+index + 1"
+                :id="'補充圖片-'+(index + 1)"
                 type="text"
                 class="form-control mb-2"
                 placeholder="請輸入圖片連結"
